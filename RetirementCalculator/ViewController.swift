@@ -34,6 +34,17 @@ class ViewController: UIViewController {
         MSAnalytics.trackEvent("navigated_to_calculator")
     }
     
+    func calculateRetirementAmount(current_age: Int, retirement_Age: Int, monthly_Investment: Float, current_Savings: Float, interest_Rate: Float) -> Double {
+        let months_until_retirement = (retirement_Age - current_age) * 12
+        
+        var retirement_Amount = Double(current_Savings) * pow(Double(1 + interest_Rate/100), Double(months_until_retirement))
+        
+        for i in 1...months_until_retirement {
+            let monthly_rate = interest_Rate / 100 / 12
+            retirement_Amount += Double(monthly_Investment) * pow(Double(1 + monthly_rate), Double(i))
+        }
+        return retirement_Amount
+    }
     
     @IBAction func calculateButton_TouchUpInside(_ sender: UIButton) {
        // MSCrashes.generateTestCrash()
@@ -43,7 +54,9 @@ class ViewController: UIViewController {
         let current_Savings: Float? = Float(savingsTextField.text!)
         let interest_Rate: Float? = Float(interestRateTextField.text!)
         
-        resultLabel.text = "If you save $\(monthly_Investment!) every month for \(planned_Retirement_Age! - current_Age!) years, and invest that money plus your current investment of \(current_Savings!) at a \(interest_Rate!)% annual Interest Rate, you will have $X by the time you are \(planned_Retirement_Age!)"
+        let retirement_Amount = calculateRetirementAmount(current_age: current_Age!, retirement_Age: planned_Retirement_Age!, monthly_Investment: monthly_Investment!, current_Savings: current_Savings!, interest_Rate: interest_Rate!)
+        
+        resultLabel.text = "If you save $\(monthly_Investment!) every month for \(planned_Retirement_Age! - current_Age!) years, and invest that money plus your current investment of \(current_Savings!) at a \(interest_Rate!)% annual Interest Rate, you will have $\(retirement_Amount) by the time you are \(planned_Retirement_Age!)"
         
         let properties = ["current_Age": String(current_Age!),
                           "planned_Retirement_Age": String(planned_Retirement_Age!)]
